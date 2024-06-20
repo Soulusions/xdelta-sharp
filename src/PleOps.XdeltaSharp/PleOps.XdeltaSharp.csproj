@@ -4,6 +4,7 @@
     <Description>Decompressor of VCDIFF patch files (RFC3284).</Description>
     <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <RootNamespace>PleOps.XdeltaSharp</RootNamespace>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

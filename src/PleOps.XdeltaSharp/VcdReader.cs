@@ -24,8 +24,8 @@ namespace PleOps.XdeltaSharp
 
     public class VcdReader
     {
-        private const int BytesInInteger = 4;
-        private const int MaxBytesInInteger = 5;
+        private const int BytesInInteger = 8;
+        private const int MaxBytesInInteger = 9;
         private const int MaxBitsInInteger = BytesInInteger * 8;
 
         public VcdReader(Stream stream)
@@ -58,7 +58,7 @@ namespace PleOps.XdeltaSharp
             return data;
         }
 
-        public byte[] ReadBytes(uint count)
+        public byte[] ReadBytes(long count)
         {
             if (count > int.MaxValue)
                 throw new FormatException("Trying to read more than UInt32.MaxValue bytes");
@@ -66,7 +66,7 @@ namespace PleOps.XdeltaSharp
             return ReadBytes((int)count);
         }
 
-        public uint ReadInteger()
+        public long ReadInteger()
         {
             return DecodeInteger();
         }
@@ -75,12 +75,12 @@ namespace PleOps.XdeltaSharp
         /// Decodes an integer of variable length.
         /// Defined in RCF-3284, the VCDIFF format uses a variable-length integer.
         /// Each byte contains 7-bits of data and the last bit indicates if there
-        /// more bytes to decode.
+        /// are more bytes to decode.
         /// </summary>
         /// <returns>The integer.</returns>
-        private uint DecodeInteger()
+        private long DecodeInteger()
         {
-            uint value = 0;
+            long value = 0;
             byte bytesRead = 0;
             int data;
 

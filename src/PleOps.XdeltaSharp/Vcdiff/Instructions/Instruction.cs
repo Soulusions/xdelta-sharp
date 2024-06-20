@@ -35,7 +35,7 @@ namespace PleOps.XdeltaSharp.Vcdiff.Instructions
             private set;
         }
 
-        public uint Size {
+        public long Size {
             get;
             private set;
         }

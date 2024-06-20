@@ -34,14 +34,14 @@ namespace PleOps.XdeltaSharp.Vcdiff.Instructions
             this.binaryMode = mode;
         }
 
-        public uint Address {
+        public long Address {
             get;
             private set;
         }
 
         public override void DecodeInstruction(Window window, Stream input, Stream output)
         {
-            uint hereAddress = window.SourceSegmentLength + ((uint)output.Position - window.TargetWindowOffset);
+            long hereAddress = window.SourceSegmentLength + (output.Position - window.TargetWindowOffset);
             Address = cache.GetAddress(hereAddress, binaryMode, window.Addresses);
 
             CopyFromSourceWindow(window, input, output);
@@ -63,15 +63,15 @@ namespace PleOps.XdeltaSharp.Vcdiff.Instructions
             Stream stream = window.Source.HasFlag(WindowFields.Target) ? output : input;
 
             // Get the length
-            uint length = Size;
+            long length = Size;
             if (Address + Size > window.SourceSegmentLength)
                 length = window.SourceSegmentLength - Address;
 
             // Get the address
-            uint address = Address + window.SourceSegmentOffset;
+            long address = Address + window.SourceSegmentOffset;
 
             // And copy
-            DirectCopy(stream, output, address, (int)length);
+            DirectCopy(stream, output, address, length);
         }
 
         private void CopyFromTargetWindow(Window window, Stream output)
@@ -81,12 +81,12 @@ namespace PleOps.XdeltaSharp.Vcdiff.Instructions
                 return;
 
             // Get length, that is Size except if we have read something from SourceWindow
-            uint length = Size;
+            long length = Size;
             if (Address < window.SourceSegmentLength)
                 length -= window.SourceSegmentLength - Address;
 
             // Get address
-            uint address = window.TargetWindowOffset;        // Absolute to target window
+            long address = window.TargetWindowOffset;        // Absolute to target window
             address += Address - window.SourceSegmentLength; // Relative to TargetWindow
 
             // Determine if some bytes can't be read still
@@ -94,33 +94,46 @@ namespace PleOps.XdeltaSharp.Vcdiff.Instructions
 
             // If there is no overlap, the typical read and write, else copy one by one
             if (!overlap)
-                DirectCopy(output, output, address, (int)length);
+                DirectCopy(output, output, address, length);
             else
-                SlowCopy(output, address, (int)length);
+                SlowCopy(output, address, length);
         }
 
-        private void DirectCopy(Stream input, Stream output, uint address, int length)
+        private void DirectCopy(Stream input, Stream output, long address, long length)
         {
-            byte[] data = new byte[length];
+            if (length > int.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length), "Length exceeds the maximum value for an integer.");
+            }
+
+            int intLength = (int)length;
+            byte[] data = new byte[intLength];
 
             // Seek and read. Need to keep the position if we are reading from output
             long oldAddress = input.Position;
             input.Position = address;
-            input.Read(data, 0, length);
+            input.Read(data, 0, intLength);
             input.Position = oldAddress;
 
             // Write
-            output.Write(data, 0, length);
+            output.Write(data, 0, intLength);
         }
 
-        private void SlowCopy(Stream stream, uint address, int length)
+        private void SlowCopy(Stream stream, long address, long length)
         {
+            if (length > int.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length), "Length exceeds the maximum value for an integer.");
+            }
+
+            int intLength = (int)length;
+
             long startOutputPosition = stream.Position;
-            int availableData = (int)(startOutputPosition - address);
+            long availableData = startOutputPosition - address;
             byte[] buffer = new byte[availableData];
 
-            for (int i = 0; i < length; i += availableData) {
-                int toCopy = (length - i < availableData) ? length - i : availableData;
+            for (long i = 0; i < intLength; i += availableData) {
+                int toCopy = (int)(intLength - i < availableData ? intLength - i : availableData);
 
                 stream.Position = address + i;
                 stream.Read(buffer, 0, toCopy);

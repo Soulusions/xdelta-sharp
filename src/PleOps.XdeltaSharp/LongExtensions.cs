@@ -17,32 +17,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-namespace PleOps.XdeltaSharp.Vcdiff
+namespace PleOps.XdeltaSharp
 {
-    public class Window
+    internal static class LongExtensions
     {
-        internal Window()
+        public static bool CheckOverflow(this long address, long length)
         {
+            return length > (long.MaxValue - address);
         }
-
-        public WindowFields Source { get; set; }
-
-        public long TargetWindowOffset { get; set; }
-
-        public long SourceSegmentOffset { get; set; }
-
-        public long TargetWindowLength { get; set; }
-
-        public long SourceSegmentLength { get; set; }
-
-        public uint Checksum { get; set; }
-
-        public WindowCompressedFields CompressedFields { get; set; }
-
-        public VcdReader Data { get; set; }
-
-        public VcdReader Instructions { get; set; }
-
-        public VcdReader Addresses { get; set; }
     }
 }

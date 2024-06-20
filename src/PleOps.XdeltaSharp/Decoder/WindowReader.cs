@@ -29,8 +29,8 @@ namespace PleOps.XdeltaSharp.Decoder
 
         private readonly Header header;
         private readonly VcdReader vcdReader;
-        private uint lastWindowOffset;
-        private uint lastWindowLength;
+        private long lastWindowOffset;
+        private long lastWindowLength;
 
         public WindowReader(Stream patch, Header header)
         {
@@ -106,9 +106,9 @@ namespace PleOps.XdeltaSharp.Decoder
                 throw new FormatException("invalid delta indicator bits set");
 
             // Read section lengths
-            uint dataLength = vcdReader.ReadInteger();
-            uint instructionsLength = vcdReader.ReadInteger();
-            uint addressesLength = vcdReader.ReadInteger();
+            long dataLength = vcdReader.ReadInteger();
+            long instructionsLength = vcdReader.ReadInteger();
+            long addressesLength = vcdReader.ReadInteger();
 
             // Read checksum if so (it's in big-endian-non-integer)
             if (window.Source.HasFlag(WindowFields.Adler32)) {

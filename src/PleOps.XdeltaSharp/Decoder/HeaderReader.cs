@@ -77,7 +77,7 @@ namespace PleOps.XdeltaSharp.Decoder
 
         private string ReadApplicationData()
         {
-            uint length = vcdReader.ReadInteger();
+            long length = vcdReader.ReadInteger();
             return Encoding.GetString(vcdReader.ReadBytes(length));
         }
     }

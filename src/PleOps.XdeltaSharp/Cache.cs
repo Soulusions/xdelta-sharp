@@ -23,16 +23,16 @@ namespace PleOps.XdeltaSharp
 
     public class Cache
     {
-        private readonly uint[] near;
-        private readonly uint[] same;
+        private readonly long[] near;
+        private readonly long[] same;
         private int nextSlot;
 
         public Cache(byte nearSlots, byte sameSlots)
         {
             NearSlots = nearSlots;
             SameSlots = sameSlots;
-            near = new uint[NearSlots];
-            same = new uint[SameSlots * 256];
+            near = new long[NearSlots];
+            same = new long[SameSlots * 256];
         }
 
         public byte NearSlots {
@@ -52,9 +52,9 @@ namespace PleOps.XdeltaSharp
             Array.Clear(same, 0, SameSlots * 256);
         }
 
-        public uint GetAddress(uint hereAddress, byte mode, VcdReader addressSection)
+        public long GetAddress(long hereAddress, byte mode, VcdReader addressSection)
         {
-            uint address = 0;
+            long address = 0;
             switch (GetMode(mode)) {
             case AddressMode.Self:
                 address = addressSection.ReadInteger();
@@ -93,7 +93,7 @@ namespace PleOps.XdeltaSharp
             return addressMode;
         }
 
-        private void Update(uint address)
+        private void Update(long address)
         {
             if (NearSlots > 0) {
                 near[nextSlot] = address;

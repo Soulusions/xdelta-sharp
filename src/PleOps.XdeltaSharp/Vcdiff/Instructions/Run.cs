@@ -38,7 +38,7 @@ namespace PleOps.XdeltaSharp.Vcdiff.Instructions
             Data = window.Data.ReadByte();
 
             byte[] dataArray = new byte[Size];
-            for (int i = 0; i < Size; i++)
+            for (long i = 0; i < Size; i++)
                 dataArray[i] = Data;
 
             output.Write(dataArray, 0, dataArray.Length);

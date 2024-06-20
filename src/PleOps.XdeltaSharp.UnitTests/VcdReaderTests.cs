@@ -72,7 +72,7 @@ namespace PleOps.XdeltaSharp.UnitTests
         public void ReadIntegerWithExactSize()
         {
             WriteBytes(0xBA, 0xEF, 0x9A, 0x15);
-            uint actual = reader.ReadInteger();
+            long actual = reader.ReadInteger();
             Assert.AreEqual(123456789, actual);
         }
 
@@ -80,7 +80,7 @@ namespace PleOps.XdeltaSharp.UnitTests
         public void ReadIntegerWithMoreBytes()
         {
             WriteBytes(0x88, 0x80, 0x80, 0x80, 0x00);
-            uint actual = reader.ReadInteger();
+            long actual = reader.ReadInteger();
             Assert.AreEqual(0x80000000, actual);
             Assert.AreEqual(5, stream.Position);
         }
@@ -88,7 +88,7 @@ namespace PleOps.XdeltaSharp.UnitTests
         [Test]
         public void ReadIntegerWithOverflowBits()
         {
-            WriteBytes(0x80, 0x80, 0x80, 0x80, 0x80);
+            WriteBytes(0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80);
             TestThrows<FormatException>(
                 () => reader.ReadInteger(),
                 "overflow in decode_integer");
@@ -97,7 +97,7 @@ namespace PleOps.XdeltaSharp.UnitTests
         [Test]
         public void ReadIntegerWithOverflowValue()
         {
-            WriteBytes(0x90, 0x80, 0x80, 0x80, 0x80);
+            WriteBytes(0x90, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80);
             TestThrows<FormatException>(
                 () => reader.ReadInteger(),
                 "overflow in decode_integer");
